@@ -8,14 +8,14 @@ function Login() {
 
   let navigate = useNavigate();
 
-  useEffect(() => {
-    let refreshToken = localStorage.getItem("refreshToken");
-    if (refreshToken) {
-      RefreshAccessToken(refreshToken);
-    } else {
-      console.log("No Refresh Token Found");
-    }
-  }, []);
+  // useEffect(() => {
+  //   let refreshToken = localStorage.getItem("refreshToken");
+  //   if (refreshToken) {
+  //     RefreshAccessToken(refreshToken);
+  //   } else {
+  //     console.log("No Refresh Token Found");
+  //   }
+  // }, []);
 
   async function RefreshAccessToken(refreshToken) {
     try {

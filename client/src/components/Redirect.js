@@ -20,7 +20,7 @@ function Redirect() {
       console.log("Authcode is: " + authCode);
       GetAccessToken(authCode);
     } else {
-      navigate("/login");
+      navigate("/error");
     }
   }, []);
 
@@ -37,14 +37,17 @@ function Redirect() {
       const res = await response;
       if (res.data.access_token) {
         console.log("Redirect Success");
+        console.log(res.data);
         setLoggedIn(true);
         localStorage.setItem("accessToken", res.data.access_token);
         localStorage.setItem("refreshToken", res.data.refresh_token);
+        localStorage.setItem("tokenTime", Date.now());
         navigate("/");
       }
     } catch (err) {
       console.log("GetAccessToken Client Failure");
       console.log(err.message);
+      navigate("/error");
     }
   }
 

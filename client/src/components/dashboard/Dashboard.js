@@ -1,9 +1,59 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../../context/AuthContext"; // Maybe pass in useAuth as prop instead
 import axios from "axios";
 
 function Dashboard() {
   const { setLoggedIn } = useAuth();
+
+  useEffect(() => {
+    checkTokenValidity();
+  }, []);
+
+  // Refreshes Access_Token if expired
+  async function checkTokenValidity() {
+    let secondsSinceRefresh =
+      (Date.now() - localStorage.getItem("tokenTime")) / 1000;
+    if (secondsSinceRefresh > 7200) {
+      console.log(
+        "Refresh Token Expired. " +
+          secondsSinceRefresh +
+          " seconds since last Refresh."
+      );
+      RefreshAccessToken(localStorage.getItem("refreshToken"));
+    } else {
+      console.log(
+        "Refresh Token Fresh. " + secondsSinceRefresh + "/7200 Seconds Left."
+      );
+    }
+  }
+
+  async function RefreshAccessToken(refreshToken) {
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/refreshAccessToken",
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
+          },
+          data: {
+            refreshToken: refreshToken,
+          },
+        }
+      );
+      const res = await response;
+      if (res.data.access_token) {
+        console.log("Dashboard RefreshAccessToken() Success");
+        setLoggedIn(true);
+        localStorage.setItem("accessToken", res.data.access_token);
+        localStorage.setItem("refreshToken", res.data.refresh_token);
+        localStorage.setItem("tokenTime", Date.now());
+      }
+    } catch (err) {
+      console.log("Dashboard RefreshAccessToken() Failure");
+      console.log(err.message);
+      logOut();
+    }
+  }
 
   async function postTweet() {
     try {
@@ -41,9 +91,8 @@ function Dashboard() {
     }
   }
 
-  function logOut(e) {
+  function logOut() {
     console.log("Logging Out");
-    e.preventDefault();
     localStorage.removeItem("accessToken"); // Remove accessToken from localStorage
     localStorage.removeItem("refreshToken"); // Remove refreshToken from localStorage
     revokeToken(localStorage.getItem("accessToken"), "access_token");
@@ -57,7 +106,7 @@ function Dashboard() {
       <br />
       <button onClick={() => postTweet()}>Post Tweet</button>
       <br />
-      <button onClick={(e) => logOut(e)}>Log Out</button>
+      <button onClick={() => logOut()}>Log Out</button>
     </div>
   );
 }

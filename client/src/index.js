@@ -25,14 +25,6 @@ root.render(
           }
         />
         <Route
-          path="/redirect"
-          element={
-            <HiddenRoute>
-              <Redirect />
-            </HiddenRoute>
-          }
-        />
-        <Route
           path="/login"
           element={
             <HiddenRoute>
@@ -40,6 +32,7 @@ root.render(
             </HiddenRoute>
           }
         />
+        <Route path="/redirect" element={<Redirect />} />
         <Route path="*" element={<Error />} />
       </Routes>
     </BrowserRouter>
