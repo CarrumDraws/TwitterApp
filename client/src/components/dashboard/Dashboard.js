@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { useAuth } from "../../context/AuthContext"; // Maybe pass in useAuth as prop instead
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Dashboard() {
-  const { setLoggedIn } = useAuth();
+  let navigate = useNavigate();
 
   useEffect(() => {
     checkTokenValidity();
@@ -43,10 +43,10 @@ function Dashboard() {
       const res = await response;
       if (res.data.access_token) {
         console.log("Dashboard RefreshAccessToken() Success");
-        setLoggedIn(true);
         localStorage.setItem("accessToken", res.data.access_token);
         localStorage.setItem("refreshToken", res.data.refresh_token);
         localStorage.setItem("tokenTime", Date.now());
+        localStorage.setItem("loggedIn", true);
       }
     } catch (err) {
       console.log("Dashboard RefreshAccessToken() Failure");
@@ -93,11 +93,13 @@ function Dashboard() {
 
   function logOut() {
     console.log("Logging Out");
-    localStorage.removeItem("accessToken"); // Remove accessToken from localStorage
-    localStorage.removeItem("refreshToken"); // Remove refreshToken from localStorage
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("tokenTime");
+    localStorage.removeItem("loggedIn");
     revokeToken(localStorage.getItem("accessToken"), "access_token");
     revokeToken(localStorage.getItem("refreshToken"), "refresh_token");
-    setLoggedIn(false);
+    navigate("/login");
   }
 
   return (
