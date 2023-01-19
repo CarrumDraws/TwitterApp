@@ -1,10 +1,21 @@
 import React from "react";
 
 function Login() {
+  function genState() {
+    let result = "";
+    const characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const charactersLength = characters.length;
+    for (let i = 0; i < 50; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+  }
+
   const queries = new URLSearchParams({
     response_type: "code",
-    client_id: "QmdUek1xLWNOampYVktWSU9QaVk6MTpjaQ",
-    state: "state",
+    client_id: process.env.REACT_APP_CLIENT_ID,
+    state: genState(),
     // scope: "tweet.read+tweet.write+users.read", // Not percent-encoding spaces correctly
     redirect_uri: "http://localhost:3000/redirect",
     code_challenge: "challenge",
@@ -24,7 +35,7 @@ function Login() {
         target="_self"
         rel="noreferrer"
       >
-        Log in to Twitter
+        Login With Twitter
       </a>
     </div>
   );

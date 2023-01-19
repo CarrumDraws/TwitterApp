@@ -55,14 +55,15 @@ function Dashboard() {
     }
   }
 
-  async function postTweet() {
+  async function postTweet(e) {
+    e.preventDefault();
     try {
       const response = await axios.post("http://localhost:5000/postTweet", {
         headers: {
           "Content-Type": "application/json",
         },
         data: {
-          text: "Hellooo",
+          text: "Hello World",
           token: localStorage.getItem("accessToken"),
         },
       });
@@ -75,7 +76,7 @@ function Dashboard() {
 
   async function revokeToken(token, tokenType) {
     try {
-      const response = await axios.post("http://localhost:5000/revokeToken", {
+      await axios.post("http://localhost:5000/revokeToken", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -84,7 +85,6 @@ function Dashboard() {
           tokenType: tokenType,
         },
       });
-      const parseRes = await response; // Get Token
       console.log("Token Revoked");
     } catch (err) {
       console.log(err.message);
@@ -106,7 +106,7 @@ function Dashboard() {
     <div>
       Dashboard
       <br />
-      <button onClick={() => postTweet()}>Post Tweet</button>
+      <button onClick={(e) => postTweet(e)}>Tweet "Hello World"</button>
       <br />
       <button onClick={() => logOut()}>Log Out</button>
     </div>
