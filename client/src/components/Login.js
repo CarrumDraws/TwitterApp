@@ -1,6 +1,7 @@
 import React from "react";
 
 function Login() {
+  // Generates random string for 'state' param
   function genState() {
     let result = "";
     const characters =
